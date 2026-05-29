@@ -124,6 +124,20 @@ class _AuthViewState extends ConsumerState<AuthView> {
             width: 80,
             height: 80,
             fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.toll_rounded,
+                  size: 44,
+                  color: AppTheme.primaryGreen,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 16),
           Text(

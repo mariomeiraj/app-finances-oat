@@ -1,16 +1,17 @@
-# 💰 Finanças OAT - Aplicativo de Controle Financeiro Pessoal
+# 💰 Koins - Aplicativo de Controle Financeiro Pessoal
 
-Bem-vindo ao **Finanças OAT**, um aplicativo moderno, premium e completo de finanças pessoais desenvolvido em **Flutter** seguindo práticas avançadas da arquitetura **MVVM (Model-View-ViewModel)**. 
+Bem-vindo ao **Koins**, um aplicativo moderno, premium e completo de finanças pessoais desenvolvido em **Flutter** seguindo práticas avançadas da arquitetura **MVVM (Model-View-ViewModel)**. 
 
-O aplicativo apresenta um visual premium de alta fidelidade na cor verde-financeiro (estilo PicPay), com suporte a banco de dados persistente (SQLite), cotações de moedas em tempo real da AwesomeAPI, conversor de moedas integrado e gráficos de análise financeira rica e responsiva.
+O aplicativo apresenta um visual premium de alta fidelidade na cor verde-financeiro (estilo PicPay) com fundo slate escuro no cabeçalho de login, com suporte a banco de dados persistente (SQLite), cotações de moedas em tempo real da AwesomeAPI, conversor de moedas integrado e gráficos de análise financeira rica e responsiva.
 
 ---
 
 ## 🎨 Design System & Visual Premium
 O visual foi planejado para surpreender desde o primeiro contato, focando em elegância, usabilidade e feedback micro-animado:
-* **Harmonia Cromática**: Baseada no verde PicPay (`#00C853`), com tons contrastantes de verde escuro, coral/vermelho suave para despesas e azul-turquesa para o saldo de carteira.
-* **Tipografia Moderna**: Integrada à fonte premium **Inter** do Google Fonts para máxima legibilidade.
+* **Harmonia Cromática**: Baseada no verde PicPay (`#00C853`), com tons contrastantes de verde escuro, slate escuro (`#0F172A` / `#1E293B`) no cabeçalho, coral/vermelho suave para despesas e azul-turquesa para o saldo de carteira.
+* **Tipografia Moderna**: Integrada às fontes premium **Sora** (para marcas, cabeçalhos e números) e **Inter** (para textos de apoio e leitura contínua) do Google Fonts para máxima legibilidade.
 * **Componentização Premium**: Cards de resumo com cantos arredondados (16px), sombras suaves responsivas ao toque, formulários preenchidos dinamicamente e transição suave (AnimatedSwitcher) entre as telas de Login e Cadastro.
+* **Logo Oficial Integrada**: Implementada a logo oficial (`koins-logo.png`) no cabeçalho com tratamento resiliente contra falhas de carregamento e erros de rede (usando `errorBuilder` com fallback instantâneo).
 
 ---
 
@@ -29,14 +30,14 @@ lib/
 │   └── repositories/     # Repositórios que encapsulam as queries SQL de usuários e transações
 ├── models/               # Modelos de dados imutáveis puros (UserModel, TransactionModel, CurrencyModel)
 ├── theme/                # AppTheme - Definições completas do design system e tokens de estilo do Material 3
-├── viewmodels/           # Gerenciamento de estado reativo por meio do flutter_riverpod (Flat Notifiers)
+├── viewmodels/           # Gerenciamento de estado reativo por meio do flutter_riverpod (State Notifiers)
 ├── views/                # Telas (Views) do aplicativo integradas aos ViewModels
-│   ├── auth/             # Login & Cadastro unificados em tela única com transição dinâmica
+│   ├── auth/             # Login & Cadastro com cabeçalho de gradiente slate escuro e a logo do Koins
 │   ├── shell/            # MainShell - Abas inferiores controladas por IndexedStack (Navegação sem perda de estado)
 │   ├── dashboard/        # Tela inicial com visão de carteira, cartões de resumo, lista CRUD e BottomSheets
 │   ├── analytics/        # Análise financeira rica contendo gráficos de barras e setores (pizza)
 │   ├── currency/         # Cotações em tempo real e Conversor instantâneo de BRL para USD/EUR/BTC
-│   └── profile/          # Gestão do perfil, avatar dinâmico por iniciais e estatísticas de uso
+│   └── profile/          # Gestão do perfil com informações do membro, card de configurações e botão de logout
 └── widgets/              # Componentes genéricos reutilizáveis (botões premium, campos customizados, cards)
 ```
 
@@ -67,7 +68,7 @@ erDiagram
     users ||--o{ transactions : "possui"
 ```
 
-* **Repositório de Autenticação (`AuthRepository`)**: Lida com persistência segura, cadastro de novos usuários (impedindo duplicidade de e-mail com tratamentos de erros de banco) e validação de login.
+* **Repositório de Autenticação (`AuthRepository`)**: Lida com persistência segura, cadastro de novos usuários, busca de credenciais por ID ou e-mail, e atualização segura de dados cadastrais (Name, Email, Password).
 * **Repositório de Transações (`TransactionRepository`)**: Lida com o ciclo completo de CRUD (criação, leitura, atualização e deleção) das receitas e despesas vinculadas ao usuário logado, além de filtros reativos por tipo de movimentação.
 
 ---
@@ -76,7 +77,7 @@ erDiagram
 
 A reatividade e sincronização em tempo real entre a interface do usuário (UI) e o banco de dados é feita via **Riverpod (StateNotifier)**. Todas as regras de negócio são centralizadas na camada de ViewModels:
 
-1. **`AuthViewModel`**: Mantém o estado global da sessão do usuário (`AuthState`). Realiza o login reativo, cria as contas no SQLite e expõe o usuário autenticado por meio da propriedade `user` para os demais componentes.
+1. **`AuthViewModel`**: Mantém o estado global da sessão do usuário (`AuthState`). Realiza o login reativo, cria as contas no SQLite, atualiza as informações cadastrais do perfil via `updateUser` e expõe o usuário autenticado de forma global.
 2. **`TransactionsViewModel`**: Gerencia o estado de transações do usuário atual (`TransactionsState`). Ao adicionar, editar ou remover uma movimentação, o banco de dados é atualizado e a lista é recarregada instantaneamente, propagando os dados para as demais views.
 3. **`DashboardViewModel` (Estado Derivado)**: Consome a lista de transações e expõe de forma calculada e em tempo real o **Saldo Total**, a **Soma de Receitas**, a **Soma de Despesas** e as **5 transações mais recentes**.
 4. **`AnalyticsViewModel` (Estado Derivado)**: Agrupa todas as despesas por categoria de forma assíncrona para abastecer os gráficos de Pizza e calcula as barras comparativas de Receita vs Despesa.
@@ -87,7 +88,7 @@ A reatividade e sincronização em tempo real entre a interface do usuário (UI)
 ## 🖥️ Detalhes das Telas (Views)
 
 ### 🔑 Autenticação (Login / Cadastro)
-Apresenta um cabeçalho premium com gradiente verde financeiro e um botão de segmentação suave. Com um único toque, o formulário de Login se transforma dinamicamente no formulário de Cadastro, exibindo animações elegantes e aplicando validações instantâneas (email válido, nome com mais de 2 letras, senha forte de no mínimo 6 dígitos).
+Apresenta um cabeçalho premium com gradiente slate escuro, exibição da logo oficial do **Koins** (PNG) e um botão de segmentação suave. Com um único toque, o formulário de Login se transforma dinamicamente no formulário de Cadastro, exibindo animações elegantes e aplicando validações instantâneas (email válido, nome com mais de 2 letras, senha forte de no mínimo 6 dígitos).
 
 ### 🏠 Dashboard (Início)
 Uma área limpa e convidativa contendo a saudação ao usuário e três grandes **SummaryCards** informativos (Saldo, Receitas e Despesas). Abaixo, uma listagem animada das transações recentes com ícones semânticos de categoria.
@@ -105,8 +106,9 @@ Consome as cotações em tempo real e permite que o usuário faça simulações 
 * Cartões contendo o percentual de variação diária destacado em verde (caso positivo) ou vermelho (caso de queda), com setas indicativas de oscilação.
 * **Conversor Integrado**: Digite um valor em Real (BRL) e veja instantaneamente a conversão simultânea para as três principais moedas globais baseadas no preço de compra em tempo real.
 
-### 👤 Perfil do Usuário
-Apresenta o perfil administrativo do usuário, destacando suas iniciais em um grande avatar circular verde, estatísticas resumidas de uso (como a contagem total de transações registradas no SQLite) e a data em que iniciou no aplicativo. Possui um botão seguro de **Sair da conta** com caixas de diálogos de confirmação de segurança.
+### 👤 Perfil do Usuário & Configurações
+* **Aba Perfil (`ProfileView`)**: Apresenta o perfil administrativo do usuário com suas iniciais de forma estilizada, data de adesão e total de transações efetuadas. Fornece o botão de saída da conta com caixas de diálogos de confirmação de segurança.
+* **Configurações do Perfil (`ProfileSettingsView`)**: Card tátil no perfil com efeito `InkWell` que navega para a nova tela de configurações. O usuário pode editar seu nome completo, e-mail e redefinir a senha de forma protegida com feedback visual em tempo real (Snackbar).
 
 ---
 
@@ -122,7 +124,7 @@ sudo apt-get update && sudo apt-get install -y sqlite3 libsqlite3-dev
 ```
 
 #### 🔑 Variáveis de Ambiente (`.env`)
-O aplicativo consome dados da AwesomeAPI com suporte a token de autenticação via chave de API (fornecendo dados em tempo real sem cache de 1 minuto). Para configurar o seu ambiente:
+O aplicativo consome dados da AwesomeAPI com suporte a token de autenticação via chave de API. Para configurar o seu ambiente:
 1. Copie o arquivo `.env.example` para `.env`:
    ```bash
    cp .env.example .env
@@ -151,9 +153,34 @@ flutter run -d web-server --web-port=8080 --web-hostname=0.0.0.0
 flutter run -d linux
 ```
 
-### Compilar para Produção (Web Release)
+---
+
+## ⚙️ Configurações Nativas de Build (Android / APK)
+
+### 📲 Ícones Nativos do Aplicativo (Launcher Icons)
+O ícone do launcher é gerado e atualizado de forma automática a partir da imagem `assets/images/koins-logo.png` configurada no pacote `flutter_launcher_icons` do `pubspec.yaml`.
+
+Para atualizar ou regenerar todos os ícones nativos de alta fidelidade para as diferentes densidades de tela do Android (HDPI, MDPI, XHDPI, etc.), execute:
+```bash
+dart run flutter_launcher_icons
+```
+
+### 🌐 Permissão de Internet em Produção
+O arquivo de manifesto nativo do Android (`android/app/src/main/AndroidManifest.xml`) foi atualizado com a permissão oficial de acesso à Internet para garantir que as conexões de API (AwesomeAPI) e banco em nuvem (Supabase) funcionem perfeitamente no APK final:
+```xml
+<uses-permission android:name="android.permission.INTERNET"/>
+```
+
+### 📦 Compilar para Produção (Android APK)
+Para gerar o arquivo final APK pronto para instalação no seu smartphone físico de forma otimizada (modo Release):
+```bash
+flutter build apk --release
+```
+O arquivo gerado estará disponível no caminho `build/app/outputs/flutter-apk/app-release.apk` pronto para transferência e instalação.
+
+### 🌐 Compilar para Produção (Web Release)
 Para gerar os assets estáticos de alta performance otimizados com tree-shaking de ícones e minificação de javascript:
 ```bash
 flutter build web --release
 ```
-Os arquivos gerados estarão disponíveis em `build/web/` prontos para deploy em servidores como Vercel, Firebase Hosting, Netlify ou GitHub Pages.
+Os arquivos gerados estarão disponíveis em `build/web/` prontos para deploy.
