@@ -87,6 +87,31 @@ class AuthViewModel extends StateNotifier<AuthState> {
     }
   }
 
+  Future<bool> updateUser(String name, String email, String password) async {
+    if (state.currentUser == null) return false;
+    state = state.copyWith(isLoading: true, clearError: true);
+
+    try {
+      final updatedUser = state.currentUser!.copyWith(
+        name: name,
+        email: email,
+        password: password,
+      );
+      final savedUser = await _authRepository.updateUser(updatedUser);
+      state = state.copyWith(
+        currentUser: savedUser,
+        isLoading: false,
+      );
+      return true;
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: e.toString().replaceFirst('Exception: ', ''),
+      );
+      return false;
+    }
+  }
+
   void logout() {
     state = const AuthState();
   }

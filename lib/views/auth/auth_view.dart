@@ -119,21 +119,11 @@ class _AuthViewState extends ConsumerState<AuthView> {
       ),
       child: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryGreen.withOpacity(0.12),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppTheme.primaryGreen.withOpacity(0.25),
-                width: 1.5,
-              ),
-            ),
-            child: const Icon(
-              Icons.toll_rounded,
-              size: 44,
-              color: AppTheme.primaryGreen,
-            ),
+          Image.asset(
+            'assets/images/koins-logo.png',
+            width: 80,
+            height: 80,
+            fit: BoxFit.contain,
           ),
           const SizedBox(height: 16),
           Text(

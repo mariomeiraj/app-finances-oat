@@ -13,6 +13,12 @@ void main() async {
   await EnvConfig.init();
   await initializeDateFormatting('pt_BR', null);
 
+  // LOGS DE DEPURAÇÃO PARA VER SE O .ENV ESTÁ SENDO LIDO
+  debugPrint('=== DIAGNÓSTICO SUPABASE ===');
+  debugPrint('SUPABASE_URL: "${EnvConfig.supabaseUrl}"');
+  debugPrint('SUPABASE_ANON_KEY: "${EnvConfig.supabaseAnonKey.isNotEmpty ? 'PREENCHIDA (Tamanho: ${EnvConfig.supabaseAnonKey.length})' : 'VAZIA'}"');
+  debugPrint('============================');
+
   // Inicializa o Supabase caso as chaves estejam preenchidas
   if (EnvConfig.supabaseUrl.isNotEmpty && EnvConfig.supabaseAnonKey.isNotEmpty) {
     try {

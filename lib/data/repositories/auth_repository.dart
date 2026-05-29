@@ -156,4 +156,41 @@ class AuthRepository {
 
     return null;
   }
+
+  Future<User> updateUser(User user) async {
+    if (kIsWeb) {
+      final index = _webUsers.indexWhere((u) => u.id == user.id);
+      if (index != -1) {
+        final emailExists = _webUsers.any((u) => u.email == user.email && u.id != user.id);
+        if (emailExists) {
+          throw Exception(AppStrings.emailAlreadyExists);
+        }
+        _webUsers[index] = user;
+      } else {
+        throw Exception("Usuário não encontrado.");
+      }
+    } else {
+      try {
+        final db = await _appDatabase.database;
+        await db.update(
+          'users',
+          user.toMap(),
+          where: 'id = ?',
+          whereArgs: [user.id],
+        );
+      } on DatabaseException catch (e) {
+        if (e.isUniqueConstraintError()) {
+          throw Exception(AppStrings.emailAlreadyExists);
+        }
+        rethrow;
+      }
+    }
+
+    // Sincroniza em segundo plano com o Supabase
+    if (SupabaseSyncService.instance.isConfigured) {
+      await SupabaseSyncService.instance.syncUser(user);
+    }
+
+    return user;
+  }
 }

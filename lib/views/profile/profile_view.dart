@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:app_finances_oat/theme/app_theme.dart';
 import 'package:app_finances_oat/viewmodels/auth_viewmodel.dart';
 import 'package:app_finances_oat/viewmodels/transactions_viewmodel.dart';
+import 'package:app_finances_oat/views/profile/profile_settings_view.dart';
 
 class ProfileView extends ConsumerWidget {
   const ProfileView({super.key});
@@ -111,6 +112,69 @@ class ProfileView extends ConsumerWidget {
                       ],
                     ),
                   ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProfileSettingsView(),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryGreen.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.settings_outlined,
+                          color: AppTheme.primaryGreen,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Configurações do Perfil',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.textPrimary,
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              'Alterar nome, e-mail ou senha',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.chevron_right_rounded,
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
